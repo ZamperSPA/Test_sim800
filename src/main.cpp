@@ -90,16 +90,19 @@ void setup() {
   SerialMon.println("Wait...");
 
   // Set GSM module baud rate
-  TinyGsmAutoBaud(SerialAT, GSM_AUTOBAUD_MIN, GSM_AUTOBAUD_MAX);
-  // SerialAT.begin(9600);
+  //TinyGsmAutoBaud(SerialAT, GSM_AUTOBAUD_MIN, GSM_AUTOBAUD_MAX);
+  SerialAT.begin(115200);
+
   delay(6000);
 
   // Restart takes quite some time
   // To skip it, call init() instead of restart()
   SerialMon.println("Initializing modem...");
-  modem.restart();
-  // modem.init();
-
+  //modem.restart();
+  modem.init();
+  modem.setBaud(9600);
+  SerialAT.begin(9600);
+  modem.testAT();
   String modemInfo = modem.getModemInfo();
   SerialMon.print("Modem Info: ");
   SerialMon.println(modemInfo);
@@ -114,7 +117,7 @@ void setup() {
 
   if (modem.isNetworkConnected()) { SerialMon.println("Network connected"); }
 
-#if TINY_GSM_USE_GPRS
+
   // GPRS connection parameters are usually set after network registration
   SerialMon.print(F("Connecting to "));
   SerialMon.print(apn);
@@ -126,7 +129,7 @@ void setup() {
   SerialMon.println(" success");
 
   if (modem.isGprsConnected()) { SerialMon.println("GPRS connected"); }
-#endif
+
 
   // MQTT Broker setup
   mqtt.setServer(broker, 1883);
